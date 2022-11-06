@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     else if ( ext == "stl" || ext == "STL" )
         vera::loadSTL( filename, mesh );
 
-    vera::Image img = vera::toSdf(mesh, 5);
+    vera::Image img = vera::toSdf(mesh, 7);
 
     filename.erase(filename.length() - ext.length());
     filename += "png";
