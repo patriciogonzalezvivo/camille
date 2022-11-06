@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(clamille LANGUAGES CXX)
+project(camille LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -14,11 +14,11 @@ file(GLOB ROOT_SOURCE
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
 )
 
-add_executable(clamille
+add_executable(camille
     ${ROOT_SOURCE}
 )
 
-set_target_properties(clamille PROPERTIES
+set_target_properties(camille PROPERTIES
     CXX_STANDARD 14
     CXX_STANDARD_REQUIRED ON
 )
@@ -28,8 +28,8 @@ file(COPY   assets/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
 
 if (EMSCRIPTEN)
 
-    # # create a clamille.html 
-    # set_target_properties(clamille PROPERTIES SUFFIX ".html")
+    # # create a camille.html 
+    # set_target_properties(camille PROPERTIES SUFFIX ".html")
 
     # copy the index.html 
     file(COPY   assets/wasm/index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
@@ -51,11 +51,11 @@ if (EMSCRIPTEN)
 
     set(LFLAGS "${LFLAGS} --preload-file earth-water.png")
     
-    set_target_properties(clamille PROPERTIES LINK_FLAGS "${LFLAGS}")
-    target_link_libraries(clamille PRIVATE vera glfw webxr)
+    set_target_properties(camille PROPERTIES LINK_FLAGS "${LFLAGS}")
+    target_link_libraries(camille PRIVATE vera glfw webxr)
     
 else()
-    target_link_libraries(clamille PRIVATE vera pthread dl)
+    target_link_libraries(camille PRIVATE vera pthread dl)
 
 endif()
 
