@@ -22,6 +22,8 @@ int main(int argc, char **argv) {
     else if ( ext == "stl" || ext == "STL" )
         vera::loadSTL( filename, mesh );
 
+    // mesh.smoothNormals(45.0);
+
     vera::Image img = vera::toSdf(mesh, 6);
 
     filename.erase(filename.length() - ext.length());
