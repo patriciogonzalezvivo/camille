@@ -1,4 +1,5 @@
 #include <string>
+#include <time.h>
 
 #include "vera/io/obj.h"
 #include "vera/io/ply.h"
@@ -23,8 +24,13 @@ int main(int argc, char **argv) {
         vera::loadSTL( filename, mesh );
 
     // mesh.smoothNormals(45.0);
-
+    clock_t start, end;
+    start = clock();
     vera::Image img = vera::toSdf(mesh, 6);
+    end = clock();
+    double duration_sec = double(end-start)/CLOCKS_PER_SEC;
+
+    std::cout << "Took " << duration_sec << "secs" << std::endl;
 
     filename.erase(filename.length() - ext.length());
     filename += "png";
