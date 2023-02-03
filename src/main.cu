@@ -33,14 +33,6 @@
 #include "lygia/geometry/aabb.cuh"
 #include "lygia/geometry/triangle.cuh"
 
-inline __host__ __device__ float closestSignedDistance(const Triangle& _tri, const float3& _triNormal, const float3& _p) {
-    float3 nearest = closestPoint(_tri, _triNormal, _p);
-    float3 delta = _p - nearest;
-    float distance = length(delta);
-    distance *= sign( dot(delta/distance, _triNormal) );
-    return distance;
-}
-
 __global__ void kernel( Triangle* _tris, float3* _trisNormals, int _Ntris, 
                         float *_pixels, 
                         AABB _aabb, float3 _bdiagonal, float _max_dist, 
@@ -58,8 +50,7 @@ __global__ void kernel( Triangle* _tris, float3* _trisNormals, int _Ntris,
 
     float min_dist = 99999.9f;
     for (int i = 0; i < _Ntris; i++ ) {
-        // float dist = closestDistance(_tris[i], p);
-        float dist = closestSignedDistance(_tris[i], _trisNormals[i], p);
+        float dist = signedDistance(_tris[i], _trisNormals[i], p);
         if (abs(dist) < abs(min_dist) )
             min_dist = dist;
     }
