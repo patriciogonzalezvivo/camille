@@ -1,16 +1,28 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(camille LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
+cmake_policy(SET CMP0104 NEW)
+
+project(camille LANGUAGES CXX CUDA)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+set(CUDA_SEPARABLE_COMPILATION ON)
 
 add_compile_options(-DGLM_FORCE_CXX11 -DGLM_FORCE_SWIZZLE -Wno-psabi)
 
 # The compiled VERA 
 add_subdirectory(deps)
 
+#Searching CUDA
+find_package(CUDA REQUIRED)
+include_directories(${CUDA_INCLUDE_DIRS})
+message(STATUS ${CUDA_VERSION})
+message(STATUS ${CUDA_TOOLKIT_ROOT_DIR})
+include_directories("${PROJECT_SOURCE_DIR}/deps/lygia/include")
+
 file(GLOB ROOT_SOURCE 
+    "${PROJECT_SOURCE_DIR}/src/*.cu"
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
 )
 
@@ -18,45 +30,16 @@ add_executable(camille
     ${ROOT_SOURCE}
 )
 
-set_target_properties(camille PROPERTIES
-    CXX_STANDARD 14
-    CXX_STANDARD_REQUIRED ON
-)
+# # CUDA includes / linkage
+# set_target_properties(${PROJECT_NAME} PROPERTIES
+# 	CUDA_RESOLVE_DEVICE_SYMBOLS ON
+# 	CUDA_SEPARABLE_COMPILATION ON
+# )
 
 # copy all files on assets on the build folder
 file(COPY   assets/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
 
-if (EMSCRIPTEN)
-
-    # # create a camille.html 
-    # set_target_properties(camille PROPERTIES SUFFIX ".html")
-
-    # copy the index.html 
-    file(COPY   assets/wasm/index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
-    file(COPY   assets/wasm/fullscreen.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
-    file(COPY   assets/wasm/thumbnail.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
-
-    # set(LFLAGS "${LFLAGS} -pthread")
-    set(LFLAGS "${LFLAGS} -s USE_PTHREADS=0")
-    set(LFLAGS "${LFLAGS} -s WASM=1")
-    set(LFLAGS "${LFLAGS} -s USE_GLFW=3")
-    # set(LFLAGS "${LFLAGS} -s FULL_ES2=1")
-    # set(LFLAGS "${LFLAGS} -s FULL_ES3=1")
-    # set(LFLAGS "${LFLAGS} -s MIN_WEBGL_VERSION=2")
-    set(LFLAGS "${LFLAGS} -s MAX_WEBGL_VERSION=2")
-    # set(LFLAGS "${LFLAGS} -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1")
-    set(LFLAGS "${LFLAGS} -s ALLOW_MEMORY_GROWTH=1")
-    # set(LFLAGS "${LFLAGS} -s NO_DYNAMIC_EXECUTION=1")
-    set(LFLAGS "${LFLAGS} -s ASYNCIFY")
-
-    set(LFLAGS "${LFLAGS} --preload-file earth-water.png")
-    
-    set_target_properties(camille PROPERTIES LINK_FLAGS "${LFLAGS}")
-    target_link_libraries(camille PRIVATE vera glfw webxr)
-    
-else()
-    target_link_libraries(camille PRIVATE vera pthread dl)
-
-endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE hilma ${CUDA_LIBRARIES})
+# target_link_libraries(${PROJECT_NAME} PUBLIC ${CUDA_LIBRARIES})
 
 
