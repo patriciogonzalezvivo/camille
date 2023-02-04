@@ -23,13 +23,7 @@
 #include "hilma/ops/compute.h"
 #include "hilma/ops/image.h"
 
-#include "lygia/math/make.cuh"
-#include "lygia/math/cross.cuh"
-#include "lygia/math/clamp.cuh"
-#include "lygia/math/floor.cuh"
-#include "lygia/math/length.cuh"
-#include "lygia/math/normalize.cuh"
-#include "lygia/math/operations.cuh"
+#include "lygia/math.cuh"
 #include "lygia/geometry/aabb.cuh"
 #include "lygia/geometry/triangle.cuh"
 
@@ -99,8 +93,8 @@ int main(int argc, char **argv) {
     float3*     cpuTrisNormals = new float3[mesh_triangles.size()];
 
     AABB aabb;
-    aabb.min = make_float3(99999.9f);
-    aabb.max = make_float3(-99999.9f);
+    aabb.min = make_float3(MAX_FLOAT_VALUE);
+    aabb.max = make_float3(-MAX_FLOAT_VALUE);
 
     for (size_t i = 0; i < mesh_triangles.size(); i++) {
         cpuTris[i].a = make_float3(mesh_triangles[i][0]);
